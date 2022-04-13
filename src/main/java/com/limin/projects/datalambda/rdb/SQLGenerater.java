@@ -146,9 +146,9 @@ public class SQLGenerater {
                 String colName = e.getKey().getColumnName();
                 String values = "";
                 if (RDBLamdbdaConfig.ColumnType.VARCHAR == type) {
-                    values = StringUtils.joinWith(",", String.format("'%s'", e.getValue()));
+                    values = StringUtils.joinWith(",", e.getValue().stream().map( v -> String.format("'%s'",v)).toArray());
                 } else {
-                    values = StringUtils.joinWith(",", String.format("%s", e.getValue()));
+                    values = StringUtils.joinWith(",", e.getValue().stream().map( v -> String.format("%s",v)).toArray());
                 }
                 return String.format("%s in ( %s )", colName, values);
             } else {

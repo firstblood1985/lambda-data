@@ -7,6 +7,7 @@ import com.limin.projects.datalambda.convert.RDBObjectToIndicatorEntity;
 import com.limin.projects.datalambda.example.*;
 import com.limin.projects.datalambda.facade.LambdaQueryParams;
 import com.limin.projects.datalambda.facade.LambdaQueryResults;
+import com.limin.projects.datalambda.utils.CommonUtil;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -84,6 +85,7 @@ public class RDBQuerySericeTest {
         population = new Population();
         reportDate = new ReportDate("20220409");
         reportTime = new ReportTime("2022-04-10 10:30:00");
+        queryParams = new LambdaQueryParams().dims(sh,shCity,reportDate).indicators(population);
     }
 
     @Test
@@ -94,11 +96,49 @@ public class RDBQuerySericeTest {
 
     @Test
     public void testSingleQuery(){
-        queryParams = new LambdaQueryParams().dims(sh,shCity,reportDate).indicators(population);
         List<LambdaQueryResults> results = rdbQueryService.query(queryParams);
 
         population = results.get(0).retrieveResults(population);
         Assert.assertEquals(1000,population.getNumberOfPopulationYesterday().longValue());
+    }
+
+    @Test
+    public void testQueryWithMultiDimInstancesOfSameType(){
+        ReportDate anotherReportDate = new ReportDate("20220408");
+        queryParams.getDimInstances().add(anotherReportDate);
+
+        List<LambdaQueryResults> results = rdbQueryService.query(queryParams);
+        Assert.assertEquals(2,results.size());
+
+        population = results.get(1).retrieveResults(population);
+        Assert.assertEquals(993,population.getNumberOfPopulationYesterday().longValue());
+
+    }
+
+    @Test
+    public void testQueryFromDeltaTables(){
+        queryParams.getDimInstances().remove(2);
+        queryParams.getDimInstances().add(reportTime);
+        List<LambdaQueryResults> results = rdbQueryService.query(queryParams);
+        population = results.get(0).retrieveResults(population);
+        Assert.assertEquals(5,population.getNumberOfPeopleBornedDelta().longValue());
+    }
+
+    @Test
+    public void testThenCoalesce(){
+        List<LambdaQueryResults> results = rdbQueryService.query(queryParams);
+
+        Population population1 = results.get(0).retrieveResults(population);
+
+        queryParams.getDimInstances().remove(2);
+        queryParams.getDimInstances().add(reportTime);
+        results = rdbQueryService.query(queryParams);
+        Population population2  = results.get(0).retrieveResults(population);
+
+        population = CommonUtil.colesce(population1,population2);
+        Assert.assertEquals(1000,population.getNumberOfPopulationYesterday().longValue());
+        Assert.assertEquals(5,population.getNumberOfPeopleBornedDelta().longValue());
+
     }
 
 
