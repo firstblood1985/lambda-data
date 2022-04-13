@@ -1,0 +1,9 @@
+com/limin/projects/datalambda/convert/ObjectToDimEntityTest.class
+com/limin/projects/datalambda/config/RawConfigTest.class
+com/limin/projects/datalambda/indicator/IndicatorServiceTest.class
+com/limin/projects/datalambda/reflection/ReflectionTest.class
+com/limin/projects/datalambda/dim/DimServiceTest.class
+com/limin/projects/datalambda/config/RDBLambdaConfigTest.class
+com/limin/projects/datalambda/config/RDBLambdaConfigServiceTest.class
+com/limin/projects/datalambda/service/RDBQuerySericeTest.class
+com/limin/projects/AppTest.class
