@@ -1,9 +1,8 @@
 package com.limin.projects.datalambda.rdb;
 
 import com.limin.projects.datalambda.config.RDBLamdbdaConfig;
-import com.limin.projects.datalambda.dim.DimValue;
-import com.limin.projects.datalambda.dim.RDBDimCode;
-import com.limin.projects.datalambda.dim.RDBDimEntity;
+import com.limin.projects.datalambda.dim.*;
+import com.limin.projects.datalambda.facade.LambdaQueryParams;
 import com.limin.projects.datalambda.indicator.RDBIndicatorEntity;
 import org.apache.commons.lang3.StringUtils;
 
@@ -27,12 +26,14 @@ public class SQLGenerater {
     private List<RDBIndicatorEntity> indicatorEntities;
     private RDBLamdbdaConfig.Table table;
     private String nonExistedDim;
+    private LambdaQueryParams params;
 
-    public SQLGenerater(List<DimValue<RDBDimEntity, RDBDimCode>> dimValues, List<RDBIndicatorEntity> indicatorEntities, RDBLamdbdaConfig.Table table, String nonExistedDim) {
+    public SQLGenerater(List<DimValue<RDBDimEntity, RDBDimCode>> dimValues, List<RDBIndicatorEntity> indicatorEntities, RDBLamdbdaConfig.Table table, String nonExistedDim,LambdaQueryParams params) {
         this.dimValues = dimValues;
         this.indicatorEntities = indicatorEntities;
         this.table = table;
         this.nonExistedDim = nonExistedDim;
+        this.params = params;
     }
 
     public SQL generateSQL() {
@@ -145,6 +146,16 @@ public class SQLGenerater {
                 RDBLamdbdaConfig.ColumnType type = c.get().getColumnType();
                 String colName = e.getKey().getColumnName();
                 String values = "";
+
+                if(e.getKey().getDimCodeType() == DimCodeType.RANGE && params.isRangeQuery()) {
+                   if(e.getValue().size() != 2) // for range query, 2 parameters are must to represent start and end
+                   {
+                       throw new DimService.DimCodeException(String.format("For range query, only 2 parameters are required, but got %d",e.getValue().size()));
+                   }
+
+
+                }
+
                 if (RDBLamdbdaConfig.ColumnType.VARCHAR == type) {
                     values = StringUtils.joinWith(",", e.getValue().stream().map( v -> String.format("'%s'",v)).toArray());
                 } else {

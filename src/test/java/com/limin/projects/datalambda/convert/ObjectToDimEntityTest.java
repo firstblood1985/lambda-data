@@ -1,9 +1,6 @@
 package com.limin.projects.datalambda.convert;
 
-import com.limin.projects.datalambda.dim.DimService;
-import com.limin.projects.datalambda.dim.DimValue;
-import com.limin.projects.datalambda.dim.RDBDimCode;
-import com.limin.projects.datalambda.dim.RDBDimEntity;
+import com.limin.projects.datalambda.dim.*;
 import com.limin.projects.datalambda.example.City;
 import org.junit.Assert;
 import org.junit.Before;
@@ -38,7 +35,7 @@ public class ObjectToDimEntityTest {
         RDBObjectToDimValue rdbObjectToDimEntity = new RDBObjectToDimValue();
 
         cityEntity = new RDBDimEntity("City");
-        RDBDimCode code = new RDBDimCode("CITY_CODE");
+        RDBDimCode code = new RDBDimCode("CITY_CODE", DimCodeType.SINGLE,LambdaComparator.STRINGCOMPARATOR);
         cityEntity.addDimCode(code);
 
         map = new HashMap<>();

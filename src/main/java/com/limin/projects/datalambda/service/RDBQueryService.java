@@ -61,17 +61,17 @@ public class RDBQueryService extends QueryService<RDBDimEntity, RDBIndicatorEnti
 
         return tableAliases.stream()
                 .map(alias -> lambdaConfigService.getTableByAlias(alias))
-                .map(getTableSQLFunction(dimValues, indicatorEntities))
+                .map(getTableSQLFunction(dimValues, indicatorEntities,params))
                 .collect(Collectors.toList());
     }
 
-    private Function<Table, SQL> getTableSQLFunction(List<DimValue<RDBDimEntity, RDBDimCode>> dimValues, List<RDBIndicatorEntity> indicatorEntities) {
+    private Function<Table, SQL> getTableSQLFunction(List<DimValue<RDBDimEntity, RDBDimCode>> dimValues, List<RDBIndicatorEntity> indicatorEntities,LambdaQueryParams params) {
         return t -> new SQLGenerater(dimValues, indicatorEntities.stream().filter(
                 //filter out indicators that are coming from same table
                 rdbIndicatorEntity -> {
                     return filterIndicatorWithinSameTable(t, rdbIndicatorEntity);
                 }
-        ).collect(Collectors.toList()), t,nonExistedDim).generateSQL();
+        ).collect(Collectors.toList()), t,nonExistedDim,params).generateSQL();
     }
 
     private boolean filterIndicatorWithinSameTable(Table t, RDBIndicatorEntity rdbIndicatorEntity) {
