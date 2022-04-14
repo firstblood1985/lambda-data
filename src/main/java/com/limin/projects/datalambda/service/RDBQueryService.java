@@ -46,7 +46,7 @@ public class RDBQueryService extends QueryService<RDBDimEntity, RDBIndicatorEnti
     public List<LambdaQueryResults> query(LambdaQueryParams params) {
         List<SQL> sqls = generateSqls(params);
         RDBQueryExecutor executor = new RDBQueryExecutor(jdbcTemplate,sqls);
-        List<QueryResult<RDBDimEntity,RDBDimCode,RDBIndicatorEntity,RDBIndicator>> queryResults = executor.executeQuery();
+        List<QueryResult<RDBDimEntity,RDBDimCode,RDBIndicatorEntity,RDBIndicator>> queryResults = executor.executeQuery(params.isRangeQuery());
         return queryResults.stream().map(r-> LambdaQueryResults.of(r,params)).collect(Collectors.toList());
 
     }

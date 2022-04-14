@@ -28,7 +28,7 @@ public class SQLGenerater {
     private String nonExistedDim;
     private LambdaQueryParams params;
 
-    public SQLGenerater(List<DimValue<RDBDimEntity, RDBDimCode>> dimValues, List<RDBIndicatorEntity> indicatorEntities, RDBLamdbdaConfig.Table table, String nonExistedDim,LambdaQueryParams params) {
+    public SQLGenerater(List<DimValue<RDBDimEntity, RDBDimCode>> dimValues, List<RDBIndicatorEntity> indicatorEntities, RDBLamdbdaConfig.Table table, String nonExistedDim, LambdaQueryParams params) {
         this.dimValues = dimValues;
         this.indicatorEntities = indicatorEntities;
         this.table = table;
@@ -41,7 +41,7 @@ public class SQLGenerater {
         String dimSelectSql = buildDimSelectString();
         String dimSql = buildDimQueryString();
 
-        String sql = String.format(sqlTemplate, dimSelectSql,indicatorSql, table.getTableName(), dimSql);
+        String sql = String.format(sqlTemplate, dimSelectSql, indicatorSql, table.getTableName(), dimSql);
 
         return new SQL(sql, dimValues, indicatorEntities);
     }
@@ -59,13 +59,12 @@ public class SQLGenerater {
         return sb.toString();
     }
 
-    private String buildDimSelectString(){
+    private String buildDimSelectString() {
         StringBuilder sb = new StringBuilder();
-        for(DimValue<RDBDimEntity,RDBDimCode> dv:dimValues)
-        {
+        for (DimValue<RDBDimEntity, RDBDimCode> dv : dimValues) {
             sb.append(
-                   StringUtils.joinWith(",\n",dv.getDimCodeToValue().keySet().stream().map(RDBDimCode::getColumnName).toArray()
-                   )
+                    StringUtils.joinWith(",\n", dv.getDimCodeToValue().keySet().stream().map(RDBDimCode::getColumnName).toArray()
+                    )
             );
             sb.append(",\n");
         }
@@ -147,19 +146,33 @@ public class SQLGenerater {
                 String colName = e.getKey().getColumnName();
                 String values = "";
 
-                if(e.getKey().getDimCodeType() == DimCodeType.RANGE && params.isRangeQuery()) {
-                   if(e.getValue().size() != 2) // for range query, 2 parameters are must to represent start and end
-                   {
-                       throw new DimService.DimCodeException(String.format("For range query, only 2 parameters are required, but got %d",e.getValue().size()));
-                   }
+                if (e.getKey().getDimCodeType() == DimCodeType.RANGE && params.isRangeQuery()) {
+                    if (e.getValue().size() != 2) // for range query, 2 parameters are must to represent start and end
+                    {
+                        throw new DimService.DimCodeException(String.format("For range query, only 2 parameters are required, but got %d", e.getValue().size()));
+                    }
 
-
+                    LambdaComparator comparator = e.getKey().getLambdaComparator();
+                    String start;
+                    String end;
+                    if (comparator.compare(e.getValue().get(0), e.getValue().get(1)) >= 0) {
+                        end = e.getValue().get(0);
+                        start = e.getValue().get(1);
+                    }else{
+                        end = e.getValue().get(1);
+                        start = e.getValue().get(0);
+                    }
+                    if (RDBLamdbdaConfig.ColumnType.VARCHAR == type)  {
+                        return String.format(" %s >= '%s' and %s <= '%s'",colName,start,colName,end);
+                    }else{
+                        return String.format(" %s >= %s and %s <= %s",colName,start,colName,end);
+                    }
                 }
 
                 if (RDBLamdbdaConfig.ColumnType.VARCHAR == type) {
-                    values = StringUtils.joinWith(",", e.getValue().stream().map( v -> String.format("'%s'",v)).toArray());
+                    values = StringUtils.joinWith(",", e.getValue().stream().map(v -> String.format("'%s'", v)).toArray());
                 } else {
-                    values = StringUtils.joinWith(",", e.getValue().stream().map( v -> String.format("%s",v)).toArray());
+                    values = StringUtils.joinWith(",", e.getValue().stream().map(v -> String.format("%s", v)).toArray());
                 }
                 return String.format("%s in ( %s )", colName, values);
             } else {
