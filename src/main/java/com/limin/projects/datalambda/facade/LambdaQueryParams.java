@@ -6,9 +6,7 @@ import com.limin.projects.datalambda.dim.DimValue;
 import com.limin.projects.datalambda.indicator.IndicatorValue;
 import lombok.Getter;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * usage of this class: QueryBuilder
@@ -46,10 +44,28 @@ public class LambdaQueryParams {
     public List<Object> matchDimInstances(List<DimValue> dimValues)
     {
         List<Object> matchedResults = new ArrayList<>();
+        Set<String> isMatched = new HashSet<>();
         for(DimValue dv:dimValues){
-                for(Object dimInstance: dimInstances)
-                    if(dv.matchDimInstance(dimInstance))
-                        matchedResults.add(dimInstance);
+                for(Object dimInstance: dimInstances) {
+                    if (dv.matchDimInstance(dimInstance)) {
+                        if(!isMatched.contains(dv.getDimEntity().getCode())) {
+                            matchedResults.add(dimInstance);
+                            isMatched.add(dv.getDimEntity().getCode());
+                        }
+                        continue;
+                    }
+
+                    if(dv.matchDimEntity(dimInstance)){
+                        if(!isMatched.contains(dv.getDimEntity().getCode())) {
+                            Gson gson = new Gson();
+                            Object copiedDimInstance = gson.fromJson(gson.toJson(dimInstance), dimInstance.getClass());
+                            dv.writeBack(copiedDimInstance);
+                            isMatched.add(dv.getDimEntity().getCode());
+                            matchedResults.add(copiedDimInstance);
+                        }
+                    }
+                }
+
         }
         return matchedResults;
     }

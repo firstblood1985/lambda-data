@@ -141,5 +141,14 @@ public class RDBQuerySericeTest {
 
     }
 
+    @Test
+    public void testRangeQuery(){
+        queryParams.getDimInstances().add(new ReportDate("20220407"));
+        queryParams.setRangeQuery();
 
+        List<LambdaQueryResults> results = rdbQueryService.query(queryParams);
+        Assert.assertEquals(3,results.size());
+        ReportDate r = (ReportDate)results.get(1).getDimInstances().get(2);
+        Assert.assertEquals("20220408",r.getReportDate());
+    }
 }

@@ -13,5 +13,5 @@ import java.util.List;
  */
 public abstract class QueryExecutor<T extends AbstractDimEntity,P extends AbstractDimCode,M extends AbstractIndicatorEntity,N extends AbstractIndicator> {
 
-    public abstract List<QueryResult<T,P,M,N>> executeQuery();
+    public abstract List<QueryResult<T,P,M,N>> executeQuery(boolean isRangeQuery);
 }
