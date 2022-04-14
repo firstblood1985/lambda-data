@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.function.UnaryOperator;
 
 /**
  * usage of this class: DimCodeService
@@ -69,24 +68,27 @@ public abstract class DimService<T extends AbstractDimEntity,P extends AbstractD
 
             for(Field field:fields)
             {
-                String mapping = field.getAnnotation(DimCode.class).mapping();
+                DimCode dimCodeAnno = field.getAnnotation(DimCode.class);
+                String mapping = dimCodeAnno.mapping();
+                DimCodeType dimCodeType = dimCodeAnno.dimType();
+                LambdaComparator comparator = dimCodeAnno.comparator();
                 if(StringUtils.isEmpty(mapping ))
                 {
                     throw new DimCodeException(String.format("DimCode %s mapping value is empty",field));
                 }
-                P dimCode = (P) dimCodeBuilders.get(dbType).apply(mapping );
+                P dimCode = (P) dimCodeBuilders.get(dbType).apply(mapping,dimCodeType,comparator );
                 dimEntity.addDimCode(dimCode);
             }
         }
     }
 
-    protected static class DimEntityException extends RuntimeException{
+    public static class DimEntityException extends RuntimeException{
         public DimEntityException(String message) {
             super(message);
         }
     }
 
-    protected static class DimCodeException extends RuntimeException{
+    public static class DimCodeException extends RuntimeException{
         public DimCodeException(String message) {
             super(message);
         }

@@ -2,7 +2,6 @@ package com.limin.projects.datalambda.facade;
 
 
 import com.google.gson.Gson;
-import com.limin.projects.datalambda.dim.AbstractDimEntity;
 import com.limin.projects.datalambda.dim.DimValue;
 import com.limin.projects.datalambda.indicator.IndicatorValue;
 import lombok.Getter;
@@ -18,8 +17,8 @@ import java.util.List;
 @Getter
 public class LambdaQueryParams {
     private List<Object> dimInstances;
-
     private List<Object> indicatorInstances;
+    private boolean rangeQuery = false;
 
     public LambdaQueryParams()
     {
@@ -35,6 +34,12 @@ public class LambdaQueryParams {
     public LambdaQueryParams indicators(Object... objects)
     {
         indicatorInstances.addAll(Arrays.asList(objects));
+        return this;
+    }
+
+    public LambdaQueryParams setRangeQuery()
+    {
+        rangeQuery = true;
         return this;
     }
 

@@ -1,6 +1,5 @@
 package com.limin.projects.datalambda.dim;
 
-import com.limin.projects.datalambda.utils.CommonUtil;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -15,9 +14,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 public class RDBDimCode extends AbstractDimCode {
     private String columnName;
 
-
-    public RDBDimCode(String mapping) {
-        super(mapping);
+    public RDBDimCode(String mapping,DimCodeType dimCodeType,LambdaComparator lambdaComparator) {
+        super(mapping, dimCodeType, lambdaComparator);
         columnName = mapping.toUpperCase();
     }
 
