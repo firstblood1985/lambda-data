@@ -1,6 +1,7 @@
 package com.limin.projects.datalambda.annotations;
 
 import com.limin.projects.datalambda.config.LambdaInit;
+import com.limin.projects.datalambda.config.LambdaRawConfig;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.ElementType;
@@ -15,6 +16,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@Import(LambdaInit.class)
+@Import({LambdaInit.class, LambdaRawConfig.class})
 public @interface EnableLambdaData {
 }
