@@ -1,4 +1,4 @@
-package com.limin.projects;
+package com.limin.projects.datalambda;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;

@@ -15,6 +15,9 @@ import org.springframework.stereotype.Component;
 public class LambdaQueryFacade {
    private final SupportedDBType dbType;
 
+   @Autowired
+   private QueryService queryService;
+
     @Autowired
     public LambdaQueryFacade(LambdaRawConfig lambdaRawConfig) {
         this.dbType = SupportedDBType.of(lambdaRawConfig.getDbType(),lambdaRawConfig.getDbInstanceType());
@@ -28,7 +31,7 @@ public class LambdaQueryFacade {
             throw new IllegalArgumentException("Indicator Objects are empty");
 
         //call query service to do actual query
-        QueryService.getQueryService(dbType).query(params);
+        queryService.query(params);
     }
 
 

@@ -4,12 +4,14 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 
 /**
  * usage of this class: RawConfig
  * created by limin @ 2022/4/5
  */
 @Configuration
+@PropertySource("lambdaconfig.properties")
 @ConfigurationProperties(prefix = "lambdadata.config")
 @Getter
 @Setter

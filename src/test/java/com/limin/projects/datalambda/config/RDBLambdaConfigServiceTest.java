@@ -7,10 +7,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-//import org.springframework.jdbc.core.JdbcTemplate;
-//import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
-//import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-//import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
@@ -25,7 +21,7 @@ import javax.sql.DataSource;
  */
 @SpringBootTest
 @RunWith(SpringRunner.class)
-@TestPropertySource("/test2.properties")
+@TestPropertySource("/test.properties")
 public class RDBLambdaConfigServiceTest {
 
     @Autowired
@@ -39,8 +35,8 @@ public class RDBLambdaConfigServiceTest {
     public void setup() {
         dataSource = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2)
                 .generateUniqueName(true)
-                .addScript("classpath:schema2.sql")
-                .addScript("classpath:test-data2.sql")
+                .addScript("classpath:schema_lambda_example.sql")
+                .addScript("classpath:lambda_data_test_data.sql")
                 .build();
 
         rdbLamdbdaConfig = new RDBLamdbdaConfig(SupportedDBType.SQL_MYSQL,lambdaRawConfig);
@@ -59,9 +55,9 @@ public class RDBLambdaConfigServiceTest {
     @Test
     public void testSetMetaData(){
 
-        Assert.assertEquals(1,rdbLamdbdaConfig.getTables().size());
-        Assert.assertEquals("EMPLOYEE",rdbLamdbdaConfig.getTables().get(0).getTableName());
-        Assert.assertEquals(4,rdbLamdbdaConfig.getTables().get(0).getColumns().size());
+        Assert.assertEquals(2,rdbLamdbdaConfig.getTables().size());
+        Assert.assertEquals("POPULATION_STATS",rdbLamdbdaConfig.getTables().get(0).getTableName());
+        Assert.assertEquals(10,rdbLamdbdaConfig.getTables().get(0).getColumns().size());
     }
 
     @After

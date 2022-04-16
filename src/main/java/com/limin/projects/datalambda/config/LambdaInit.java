@@ -4,6 +4,7 @@ import com.limin.projects.datalambda.convert.ObjectToDimValue;
 import com.limin.projects.datalambda.convert.ObjectToIndicatorEntity;
 import com.limin.projects.datalambda.dim.DimService;
 import com.limin.projects.datalambda.indicator.IndicatorService;
+import com.limin.projects.datalambda.service.QueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -63,6 +64,9 @@ public class LambdaInit {
         return IndicatorService.getBuilder(dbType).apply(lambdaRawConfig);
     }
 
-    //TODO: create query service
-
+    @Autowired
+    @Bean
+    QueryService queryService(SupportedDBType dbType,DataSource dataSource,LambdaConfigService lambdaConfigService,ObjectToDimValue objectToDimValue,ObjectToIndicatorEntity objectToIndicatorEntity) {
+        return QueryService.getQueryServiceBuiler(dbType).apply(lambdaRawConfig,dataSource,lambdaConfigService,objectToDimValue,objectToIndicatorEntity);
+    }
 }

@@ -15,7 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  */
 @SpringBootTest
 @RunWith(SpringRunner.class)
-@TestPropertySource("/lambdaconfig-test2.properties")
+@TestPropertySource("/test.properties")
 public class RawConfigTest {
 
     @Autowired
@@ -26,14 +26,6 @@ public class RawConfigTest {
     {
         Assert.assertNotNull(lambdaRawConfig);
         Assert.assertEquals("mysql",lambdaRawConfig.getDbInstanceType());
-    }
-
-    @Value("${lambdadata.config.welcome}")
-    private String welcome;
-
-    @Test
-    public void testWelcome(){
-        Assert.assertEquals("welcome",welcome);
     }
 
 
