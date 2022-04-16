@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
@@ -19,8 +20,8 @@ import javax.sql.DataSource;
  * usage of this class: RDBLambdaConfigServiceTest
  * created by limin @ 2022/4/5
  */
-@SpringBootTest
 @RunWith(SpringRunner.class)
+@EnableConfigurationProperties(value = LambdaRawConfig.class)
 @TestPropertySource("/test.properties")
 public class RDBLambdaConfigServiceTest {
 
