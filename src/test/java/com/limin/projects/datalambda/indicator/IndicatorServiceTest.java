@@ -1,10 +1,12 @@
 package com.limin.projects.datalambda.indicator;
 
+import com.limin.projects.datalambda.config.LambdaInit;
 import com.limin.projects.datalambda.config.LambdaRawConfig;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -16,8 +18,8 @@ import static org.junit.Assert.assertNotNull;
  * usage of this class: IndicatorServiceTest
  * created by limin @ 2022/4/7
  */
-@SpringBootTest
 @RunWith(SpringRunner.class)
+@EnableConfigurationProperties(value = LambdaRawConfig.class)
 @TestPropertySource("/test.properties")
 public class IndicatorServiceTest {
     @Autowired
