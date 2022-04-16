@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.limin.projects</groupId>
+    <groupId>io.github.firstblood1985</groupId>
     <artifactId>lambda-data</artifactId>
     <version>${revision}</version>
     <description>limin's lambda-data project</description>
@@ -101,6 +101,13 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Project Pages</name>
+            <url>https://maven.pkg.github.com/firstblood1985/lambda-data</url>
+        </repository>
+    </distributionManagement>
 
     <build>
         <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
