@@ -18,7 +18,6 @@ import org.springframework.test.context.junit4.SpringRunner;
  */
 @RunWith(SpringRunner.class)
 @EnableConfigurationProperties(value = LambdaRawConfig.class)
-@TestPropertySource("/test.properties")
 public class RawConfigTest {
 
     @Autowired

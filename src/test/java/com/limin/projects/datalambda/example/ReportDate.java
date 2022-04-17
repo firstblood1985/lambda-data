@@ -6,6 +6,7 @@ import com.limin.projects.datalambda.dim.DimCodeType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * usage of this class: ReportDate
@@ -15,6 +16,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @DimEntity(code = "ReportDate")
+@ToString
 public class ReportDate {
 
     @DimCode(mapping = "REPORT_DATE",dimType = DimCodeType.RANGE)

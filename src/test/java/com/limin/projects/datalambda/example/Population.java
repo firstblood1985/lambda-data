@@ -2,10 +2,7 @@ package com.limin.projects.datalambda.example;
 
 import com.limin.projects.datalambda.annotations.Indicator;
 import com.limin.projects.datalambda.annotations.IndicatorEntity;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * usage of this class: Population
@@ -16,6 +13,7 @@ import lombok.Setter;
 @IndicatorEntity(code = "Population")
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class Population {
 
     @Indicator(mapping = "t1.NUMBER_OF_POPULATION")

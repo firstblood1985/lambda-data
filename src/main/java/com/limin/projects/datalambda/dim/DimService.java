@@ -7,6 +7,7 @@ import com.limin.projects.datalambda.config.SupportedDBType;
 import com.limin.projects.datalambda.utils.ReflectionUtils;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;
@@ -21,84 +22,90 @@ import java.util.function.Function;
  */
 @Getter
 @Setter
-public abstract class DimService<T extends AbstractDimEntity,P extends AbstractDimCode>{
+@Slf4j
+public abstract class DimService<T extends AbstractDimEntity, P extends AbstractDimCode> {
     private final String dimPackage;
     private final SupportedDBType dbType;
     private static Map<SupportedDBType, AbstractDimEntity.DimEntityBuilder> dimEntityBuilders;
     private static Map<SupportedDBType, AbstractDimCode.DimCodeBuilder> dimCodeBuilders;
-    private static Map<SupportedDBType,DimServiceBuilder> dimServiceBuilders;
+    private static Map<SupportedDBType, DimServiceBuilder> dimServiceBuilders;
 
-    protected Map<String,T> dimEntities = new HashMap<>();
+    protected Map<String, T> dimEntities = new HashMap<>();
 
     protected DimService(LambdaRawConfig lambdaRawConfig) {
         dimPackage = lambdaRawConfig.getDimPackage();
         dbType = SupportedDBType.of(lambdaRawConfig.getDbType(), lambdaRawConfig.getDbInstanceType());
     }
+
     static {
         dimEntityBuilders = new HashMap<>();
         dimEntityBuilders.put(SupportedDBType.SQL_MYSQL, AbstractDimEntity.DimEntityBuilder.rdbDimEntityBuiler());
 
         dimCodeBuilders = new HashMap<>();
-        dimCodeBuilders.put(SupportedDBType.SQL_MYSQL,AbstractDimCode.DimCodeBuilder.rdbDimCodeBuilder());
+        dimCodeBuilders.put(SupportedDBType.SQL_MYSQL, AbstractDimCode.DimCodeBuilder.rdbDimCodeBuilder());
 
         dimServiceBuilders = new HashMap<>();
-        dimServiceBuilders.put(SupportedDBType.SQL_MYSQL,DimServiceBuilder.rdbDimServiceBuiler());
+        dimServiceBuilders.put(SupportedDBType.SQL_MYSQL, DimServiceBuilder.rdbDimServiceBuiler());
     }
 
-    public static DimServiceBuilder getDimServiceBuilder(SupportedDBType dbType){
-        return dimServiceBuilders.getOrDefault(dbType,null);
+    public static DimServiceBuilder getDimServiceBuilder(SupportedDBType dbType) {
+        return dimServiceBuilders.getOrDefault(dbType, null);
     }
 
     public void scanPackageAndBuildDimEntities() {
         List<Class> dimEntityClasses = ReflectionUtils.scanPackageWithAnnotationAndFilterAbstract(dimPackage, DimEntity.class);
+        log.info("{} dim entities are scanned, dim entities: {}", dimEntityClasses.size(), dimEntityClasses);
 
-        for(Class dimEntityClass:dimEntityClasses)
-        {
+        if (0 == dimEntityClasses.size()) {
+            log.warn("{} is scanned, but no dim entities are found", dimPackage);
+        }
+
+        for (Class dimEntityClass : dimEntityClasses) {
             DimEntity dimEntityAnno = (DimEntity) dimEntityClass.getDeclaredAnnotation(DimEntity.class);
-            if(StringUtils.isEmpty(dimEntityAnno.code()))
-            {
-                throw new DimEntityException(String.format("DimEntity: %s value is empty",dimEntityClass.getCanonicalName()));
+            if (StringUtils.isEmpty(dimEntityAnno.code())) {
+                throw new DimEntityException(String.format("DimEntity: %s value is empty", dimEntityClass.getCanonicalName()));
             }
             String dimEntityCode = dimEntityAnno.code();
 
             T dimEntity = (T) dimEntityBuilders.get(dbType).apply(dimEntityCode);
-            dimEntities.put(dimEntityCode,dimEntity);
+            dimEntities.put(dimEntityCode, dimEntity);
             // build dim code
-            List<Field> fields = ReflectionUtils.scanClassWithAnnotation(dimEntityClass,DimCode.class);
+            List<Field> fields = ReflectionUtils.scanClassWithAnnotation(dimEntityClass, DimCode.class);
 
-            for(Field field:fields)
-            {
+            log.info("{} dim codes are scanned, dim codes: {}", fields.size(), fields);
+            for (Field field : fields) {
                 DimCode dimCodeAnno = field.getAnnotation(DimCode.class);
                 String mapping = dimCodeAnno.mapping();
                 DimCodeType dimCodeType = dimCodeAnno.dimType();
                 LambdaComparator comparator = dimCodeAnno.comparator();
-                if(StringUtils.isEmpty(mapping ))
-                {
-                    throw new DimCodeException(String.format("DimCode %s mapping value is empty",field));
+                if (StringUtils.isEmpty(mapping)) {
+                    throw new DimCodeException(String.format("DimCode %s mapping value is empty", field));
                 }
-                P dimCode = (P) dimCodeBuilders.get(dbType).apply(mapping,dimCodeType,comparator );
+                P dimCode = (P) dimCodeBuilders.get(dbType).apply(mapping, dimCodeType, comparator);
                 dimEntity.addDimCode(dimCode);
             }
         }
     }
 
-    public static class DimEntityException extends RuntimeException{
+    public static class DimEntityException extends RuntimeException {
         public DimEntityException(String message) {
             super(message);
         }
     }
 
-    public static class DimCodeException extends RuntimeException{
+    public static class DimCodeException extends RuntimeException {
         public DimCodeException(String message) {
             super(message);
         }
     }
 
-    public static interface DimServiceBuilder extends Function<LambdaRawConfig,DimService> {
+    public static interface DimServiceBuilder extends Function<LambdaRawConfig, DimService> {
 
-        static DimServiceBuilder rdbDimServiceBuiler(){
+        static DimServiceBuilder rdbDimServiceBuiler() {
             return (lambdaRawConfig -> new RDBDimService(lambdaRawConfig));
-        };
+        }
+
+        ;
 
     }
 }

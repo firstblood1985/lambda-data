@@ -2,10 +2,7 @@ package com.limin.projects.datalambda.example;
 
 import com.limin.projects.datalambda.annotations.DimCode;
 import com.limin.projects.datalambda.annotations.DimEntity;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * usage of this class: Province
@@ -16,6 +13,7 @@ import lombok.Setter;
 @DimEntity(code = "Province")
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class Province extends Location{
 
     @DimCode(mapping = "PROVINCE_CODE")

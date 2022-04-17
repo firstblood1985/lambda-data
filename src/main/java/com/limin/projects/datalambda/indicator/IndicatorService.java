@@ -7,6 +7,7 @@ import com.limin.projects.datalambda.config.SupportedDBType;
 import com.limin.projects.datalambda.utils.ReflectionUtils;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;
@@ -23,6 +24,7 @@ import java.util.function.UnaryOperator;
  */
 @Getter
 @Setter
+@Slf4j
 public abstract class IndicatorService<T extends AbstractIndicatorEntity, P extends AbstractIndicator> {
 
     private final String indicatorPackage;
@@ -54,6 +56,12 @@ public abstract class IndicatorService<T extends AbstractIndicatorEntity, P exte
 
     public void scanPackageAndBuildIndicatorEntities() {
         List<Class> indicatorEntityClasses = ReflectionUtils.scanPackageWithAnnotationAndFilterAbstract(indicatorPackage, IndicatorEntity.class);
+        log.info("{} indicator entities are scanned, indicator entities: {}", indicatorEntityClasses.size(),indicatorEntityClasses);
+
+        if(0 == indicatorEntityClasses.size()) {
+            log.warn("no indicator entities are found under {}",indicatorPackage);
+        }
+
         for (Class indicatorEntityClass : indicatorEntityClasses) {
             IndicatorEntity indicatorAnno = (IndicatorEntity) indicatorEntityClass.getDeclaredAnnotation(IndicatorEntity.class);
             if (StringUtils.isEmpty(indicatorAnno.code())) {

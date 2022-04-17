@@ -5,6 +5,7 @@ import com.limin.projects.datalambda.annotations.DimEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * usage of this class: ReportTime
@@ -14,6 +15,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @DimEntity(code = "ReportTime")
+@ToString
 public class ReportTime {
 
     @DimCode(mapping = "REPORT_TIME")
