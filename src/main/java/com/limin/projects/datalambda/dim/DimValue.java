@@ -6,6 +6,7 @@ import com.limin.projects.datalambda.service.RawQueryResult;
 import com.limin.projects.datalambda.utils.ReflectionUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
@@ -32,7 +33,7 @@ public class DimValue<T extends AbstractDimEntity, P extends AbstractDimCode> {
         this.dimEntity = dimEntity;
     }
 
-    public DimValue(T dimEntity, Object dimInstance) {
+    public DimValue(@NonNull T dimEntity, @NonNull Object dimInstance) {
         this.dimInstance = dimInstance;
         this.dimEntity = dimEntity;
         List<P> dimCodes = dimEntity.getDimCodes();

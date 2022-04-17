@@ -1,5 +1,6 @@
 package com.limin.projects.datalambda.service;
 
+import com.limin.projects.datalambda.config.LambdaInit;
 import com.limin.projects.datalambda.config.LambdaRawConfig;
 import com.limin.projects.datalambda.config.RDBLambdaConfigService;
 import com.limin.projects.datalambda.convert.RDBObjectToDimValue;
@@ -7,6 +8,7 @@ import com.limin.projects.datalambda.convert.RDBObjectToIndicatorEntity;
 import com.limin.projects.datalambda.example.*;
 import com.limin.projects.datalambda.facade.LambdaQueryParams;
 import com.limin.projects.datalambda.facade.LambdaQueryResults;
+import com.limin.projects.datalambda.testconfig.TestConfig;
 import com.limin.projects.datalambda.utils.CommonUtil;
 import org.junit.Assert;
 import org.junit.Before;
@@ -14,6 +16,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.TestComponent;
+import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.test.context.TestPropertySource;
@@ -28,7 +32,7 @@ import java.util.List;
  */
 @RunWith(SpringRunner.class)
 @EnableConfigurationProperties(value = LambdaRawConfig.class)
-@TestPropertySource("/test.properties")
+@Import({TestConfig.class,LambdaInit.class})
 public class RDBQuerySericeTest {
 
     @Autowired
@@ -43,6 +47,7 @@ public class RDBQuerySericeTest {
     @Autowired
     private RDBObjectToIndicatorEntity rdbObjectToIndicatorEntity;
 
+    @Autowired
     private DataSource dataSource;
 
     private RDBQueryService rdbQueryService;
@@ -63,12 +68,6 @@ public class RDBQuerySericeTest {
 
     @Before
     public void setup() {
-        dataSource = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2)
-                .generateUniqueName(true)
-                .addScript("classpath:schema_lambda_example.sql")
-                .addScript("classpath:lambda_data_test_data.sql")
-                .build();
-
         bj = new Province("BJ");
         sh = new Province("SH");
         js = new Province("JS");
@@ -78,8 +77,6 @@ public class RDBQuerySericeTest {
         wxCity = new City("WX");
 
 
-        rdbLambdaConfigService.setDataSource(dataSource);
-        rdbLambdaConfigService.setDataSourceMetaData();
 
         rdbQueryService = new RDBQueryService(lambdaRawConfig,dataSource,rdbLambdaConfigService,rdbObjectToDimValue,rdbObjectToIndicatorEntity);
         population = new Population();

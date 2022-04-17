@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.limin.projects.datalambda.dim.DimValue;
 import com.limin.projects.datalambda.indicator.IndicatorValue;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.*;
 
@@ -13,6 +14,7 @@ import java.util.*;
  * created by limin @ 2022/4/7
  */
 @Getter
+@ToString
 public class LambdaQueryParams {
     private List<Object> dimInstances;
     private List<Object> indicatorInstances;

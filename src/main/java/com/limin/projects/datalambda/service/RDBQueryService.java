@@ -13,6 +13,7 @@ import com.limin.projects.datalambda.config.RDBLamdbdaConfig.Table;
 import com.limin.projects.datalambda.rdb.RDBQueryExecutor;
 import com.limin.projects.datalambda.rdb.SQL;
 import com.limin.projects.datalambda.rdb.SQLGenerater;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.SetUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
  * usage of this class: RDBQueryService
  * created by limin @ 2022/4/8
  */
+@Slf4j
 public class RDBQueryService extends QueryService<RDBDimEntity, RDBIndicatorEntity, RDBLambdaConfigService,RDBObjectToDimValue,RDBObjectToIndicatorEntity> {
 
 
@@ -44,6 +46,7 @@ public class RDBQueryService extends QueryService<RDBDimEntity, RDBIndicatorEnti
 
     @Override
     public List<LambdaQueryResults> query(LambdaQueryParams params) {
+        log.info("query with params: {}",params);
         List<SQL> sqls = generateSqls(params);
         RDBQueryExecutor executor = new RDBQueryExecutor(jdbcTemplate,sqls);
         List<QueryResult<RDBDimEntity,RDBDimCode,RDBIndicatorEntity,RDBIndicator>> queryResults = executor.executeQuery(params.isRangeQuery());
